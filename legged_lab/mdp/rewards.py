@@ -31,14 +31,7 @@ if TYPE_CHECKING:
     from legged_lab.envs.tienkung.tienkung_env import TienKungEnv
 
 
-def track_lin_vel_xy_yaw_frame_exp(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv,
-    # 标准差，用于计算指数奖励，控制奖励衰减速度
-    std: float,
-    # 场景实体配置，默认为名为 "robot" 的实体配置
-    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
-) -> torch.Tensor:
+def track_lin_vel_xy_yaw_frame_exp(env: BaseEnv | TienKungEnv, std: float, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")) -> torch.Tensor:
     """
     计算在偏航坐标系下跟踪 xy 方向线速度的指数奖励。
 
@@ -64,14 +57,7 @@ def track_lin_vel_xy_yaw_frame_exp(
     return torch.exp(-lin_vel_error / std**2)
 
 
-def track_ang_vel_z_world_exp(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv,
-    # 标准差，用于计算指数奖励，控制奖励衰减速度
-    std: float,
-    # 场景实体配置，默认为名为 "robot" 的实体配置
-    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
-) -> torch.Tensor:
+def track_ang_vel_z_world_exp(env: BaseEnv | TienKungEnv, std: float, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")) -> torch.Tensor:
     """
     计算在世界坐标系下跟踪 z 轴角速度的指数奖励。
     
@@ -91,12 +77,7 @@ def track_ang_vel_z_world_exp(
     return torch.exp(-ang_vel_error / std**2)
 
 
-def lin_vel_z_l2(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv,
-    # 场景实体配置，默认为名为 "robot" 的实体配置
-    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
-) -> torch.Tensor:
+def lin_vel_z_l2(env: BaseEnv | TienKungEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")) -> torch.Tensor:
     """
     计算机器人在本体坐标系下 z 轴线速度的平方值。
 
@@ -113,19 +94,14 @@ def lin_vel_z_l2(
     return torch.square(asset.data.root_lin_vel_b[:, 2])
 
 
-def ang_vel_xy_l2(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv,
-    # 场景实体配置，默认为名为 "robot" 的实体配置
-    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
-) -> torch.Tensor:
+def ang_vel_xy_l2(env: BaseEnv | TienKungEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")) -> torch.Tensor:
     """
     计算机器人在本体坐标系下 xy 轴角速度平方和。
 
     参数:
     env (BaseEnv | TienKungEnv): 传入的环境对象。
     asset_cfg (SceneEntityCfg, 可选): 场景实体配置，默认为名为 "robot" 的实体配置。
-
+    
     返回:
     torch.Tensor: 机器人在本体坐标系下 xy 轴角速度平方和的张量。
     """
@@ -135,12 +111,7 @@ def ang_vel_xy_l2(
     return torch.sum(torch.square(asset.data.root_ang_vel_b[:, :2]), dim=1)
 
 
-def energy(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv,
-    # 场景实体配置，默认为名为 "robot" 的实体配置
-    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
-) -> torch.Tensor:
+def energy(env: BaseEnv | TienKungEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")) -> torch.Tensor:
     """
     计算关节施加扭矩与关节速度乘积的范数。
 
@@ -158,11 +129,7 @@ def energy(
     return reward
 
 
-def joint_acc_l2(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv,
-    # 场景实体配置，默认为名为 "robot" 的实体配置
-    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+def joint_acc_l2(env: BaseEnv | TienKungEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
 ) -> torch.Tensor:
     """
     计算机器人指定关节加速度的平方和。
@@ -180,9 +147,7 @@ def joint_acc_l2(
     return torch.sum(torch.square(asset.data.joint_acc[:, asset_cfg.joint_ids]), dim=1)
 
 
-def action_rate_l2(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv
+def action_rate_l2(env: BaseEnv | TienKungEnv
 ) -> torch.Tensor:
     """
     计算相邻两次动作之间差值的平方和。
@@ -202,13 +167,7 @@ def action_rate_l2(
     )
 
 
-def undesired_contacts(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv,
-    # 接触力阈值，用于判断是否为非期望接触
-    threshold: float,
-    # 传感器配置，用于获取接触力数据
-    sensor_cfg: SceneEntityCfg
+def undesired_contacts(env: BaseEnv | TienKungEnv, threshold: float, sensor_cfg: SceneEntityCfg
 ) -> torch.Tensor:
     """
     判断是否存在超过阈值的非期望接触。
@@ -230,13 +189,7 @@ def undesired_contacts(
     return torch.sum(is_contact, dim=1)
 
 
-def fly(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv,
-    # 接触力阈值，用于判断是否处于飞行状态
-    threshold: float,
-    # 传感器配置，用于获取接触力数据
-    sensor_cfg: SceneEntityCfg
+def fly(env: BaseEnv | TienKungEnv, threshold: float, sensor_cfg: SceneEntityCfg
 ) -> torch.Tensor:
     """
     判断机器人是否处于飞行状态。
@@ -259,11 +212,7 @@ def fly(
     return torch.sum(is_contact, dim=-1) < 0.5
 
 
-def flat_orientation_l2(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv,
-    # 场景实体配置，默认为名为 "robot" 的实体配置
-    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+def flat_orientation_l2(env: BaseEnv | TienKungEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
 ) -> torch.Tensor:
     """
     计算机器人在本体坐标系下投影重力向量 xy 分量的平方和。
@@ -281,9 +230,7 @@ def flat_orientation_l2(
     return torch.sum(torch.square(asset.data.projected_gravity_b[:, :2]), dim=1)
 
 
-def is_terminated(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv
+def is_terminated(env: BaseEnv | TienKungEnv
 ) -> torch.Tensor:
     """
     对非因情节超时导致终止的情节进行惩罚。
@@ -298,13 +245,7 @@ def is_terminated(
     return env.reset_buf * ~env.time_out_buf
 
 
-def feet_air_time_positive_biped(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv,
-    # 奖励的最大阈值
-    threshold: float,
-    # 传感器配置，用于获取接触时间数据
-    sensor_cfg: SceneEntityCfg
+def feet_air_time_positive_biped(env: BaseEnv | TienKungEnv, threshold: float, sensor_cfg: SceneEntityCfg
 ) -> torch.Tensor:
     """
     计算双足机器人单脚支撑时的奖励，奖励与单脚支撑时间相关。
@@ -340,13 +281,7 @@ def feet_air_time_positive_biped(
     return reward
 
 
-def feet_slide(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv,
-    # 传感器配置，用于获取接触力数据
-    sensor_cfg: SceneEntityCfg,
-    # 场景实体配置，默认为名为 "robot" 的实体配置
-    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+def feet_slide(env: BaseEnv | TienKungEnv, sensor_cfg: SceneEntityCfg, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
 ) -> torch.Tensor:
     """
     计算机器人脚滑动的奖励。
@@ -372,15 +307,7 @@ def feet_slide(
     return reward
 
 
-def body_force(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv,
-    # 传感器配置，用于获取接触力数据
-    sensor_cfg: SceneEntityCfg,
-    # 接触力阈值，默认为 500
-    threshold: float = 500,
-    # 最大奖励值，默认为 400
-    max_reward: float = 400
+def body_force(env: BaseEnv | TienKungEnv, sensor_cfg: SceneEntityCfg, threshold: float = 500, max_reward: float = 400
 ) -> torch.Tensor:
     """
     计算机器人身体受到的接触力奖励。
@@ -407,11 +334,7 @@ def body_force(
     return reward
 
 
-def joint_deviation_l1(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv,
-    # 场景实体配置，默认为名为 "robot" 的实体配置
-    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+def joint_deviation_l1(env: BaseEnv | TienKungEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
 ) -> torch.Tensor:
     """
     计算机器人关节位置与默认位置偏差的 L1 范数。
@@ -435,11 +358,7 @@ def joint_deviation_l1(
     return torch.sum(torch.abs(angle), dim=1) * zero_flag
 
 
-def body_orientation_l2(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv,
-    # 场景实体配置，默认为名为 "robot" 的实体配置
-    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+def body_orientation_l2(env: BaseEnv | TienKungEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
 ) -> torch.Tensor:
     """
     计算机器人身体朝向与重力向量在 xy 平面偏差的 L2 范数。
@@ -461,11 +380,7 @@ def body_orientation_l2(
     return torch.sum(torch.square(body_orientation[:, :2]), dim=1)
 
 
-def feet_stumble(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv,
-    # 传感器配置，用于获取接触力数据
-    sensor_cfg: SceneEntityCfg
+def feet_stumble(env: BaseEnv | TienKungEnv, sensor_cfg: SceneEntityCfg
 ) -> torch.Tensor:
     """
     判断机器人脚是否有绊倒的情况。
@@ -487,13 +402,7 @@ def feet_stumble(
     )
 
 
-def feet_too_near_humanoid(
-    # 传入的环境对象，类型可以是 BaseEnv 或者 TienKungEnv
-    env: BaseEnv | TienKungEnv,
-    # 场景实体配置，默认为名为 "robot" 的实体配置
-    asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"),
-    # 双脚之间的最小距离阈值，默认为 0.2
-    threshold: float = 0.2
+def feet_too_near_humanoid(env: BaseEnv | TienKungEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot"), threshold: float = 0.2
 ) -> torch.Tensor:
     """
     计算人形机器人双脚距离过近的惩罚值。
@@ -519,10 +428,7 @@ def feet_too_near_humanoid(
 
 
 # Regularization Reward
-def ankle_torque(
-    # 传入的环境对象，类型为 TienKungEnv
-    env: TienKungEnv
-) -> torch.Tensor:
+def ankle_torque(env: TienKungEnv) -> torch.Tensor:
     """
     对脚踝关节施加的大扭矩进行惩罚。
 
@@ -536,10 +442,7 @@ def ankle_torque(
     return torch.sum(torch.square(env.robot.data.applied_torque[:, env.ankle_joint_ids]), dim=1)
 
 
-def ankle_action(
-    # 传入的环境对象，类型为 TienKungEnv
-    env: TienKungEnv
-) -> torch.Tensor:
+def ankle_action(env: TienKungEnv) -> torch.Tensor:
     """
     对脚踝关节的动作进行惩罚。
 
@@ -553,10 +456,7 @@ def ankle_action(
     return torch.sum(torch.abs(env.action[:, env.ankle_joint_ids]), dim=1)
 
 
-def hip_roll_action(
-    # 传入的环境对象，类型为 TienKungEnv
-    env: TienKungEnv
-) -> torch.Tensor:
+def hip_roll_action(env: TienKungEnv) -> torch.Tensor:
     """
     对髋关节滚动关节的动作进行惩罚。
 
@@ -570,10 +470,7 @@ def hip_roll_action(
     return torch.sum(torch.abs(env.action[:, [env.left_leg_ids[0], env.right_leg_ids[0]]]), dim=1)
 
 
-def hip_yaw_action(
-    # 传入的环境对象，类型为 TienKungEnv
-    env: TienKungEnv
-) -> torch.Tensor:
+def hip_yaw_action(env: TienKungEnv) -> torch.Tensor:
     """
     对髋关节偏航关节的动作进行惩罚。
 
@@ -587,10 +484,7 @@ def hip_yaw_action(
     return torch.sum(torch.abs(env.action[:, [env.left_leg_ids[2], env.right_leg_ids[2]]]), dim=1)
 
 
-def feet_y_distance(
-    # 传入的环境对象，类型为 TienKungEnv
-    env: TienKungEnv
-) -> torch.Tensor:
+def feet_y_distance(env: TienKungEnv) -> torch.Tensor:
     """
     当命令的 y 轴速度较低时，对双脚在 y 轴上的距离进行惩罚，以保持合理间距。
 
@@ -617,13 +511,7 @@ def feet_y_distance(
 
 
 # Periodic gait-based reward function
-def gait_clock(
-    # 归一化的步态相位，取值范围在 [0, 1]
-    phase: torch.Tensor,
-    # 步态周期中摆动相所占比例
-    air_ratio: torch.Tensor,
-    # 相位边界的过渡宽度，用于平滑插值
-    delta_t: float
+def gait_clock(phase: torch.Tensor, air_ratio: torch.Tensor, delta_t: float
 ) -> tuple[torch.Tensor, torch.Tensor]:
     """
     生成用于脚摆动相和支撑相的周期性步态时钟信号。
@@ -673,12 +561,7 @@ def gait_clock(
     return I_frc, I_spd
 
 
-def gait_feet_frc_perio(
-    # 传入的环境对象，类型为 TienKungEnv
-    env: TienKungEnv,
-    # 相位边界的过渡宽度，用于平滑插值，默认为 0.02
-    delta_t: float = 0.02
-) -> torch.Tensor:
+def gait_feet_frc_perio(env: TienKungEnv, delta_t: float = 0.02) -> torch.Tensor:
     """
     在步态的摆动相期间惩罚脚受到的力。
 
@@ -701,12 +584,7 @@ def gait_feet_frc_perio(
     return left_frc_score + right_frc_score
 
 
-def gait_feet_spd_perio(
-    # 传入的环境对象，类型为 TienKungEnv
-    env: TienKungEnv,
-    # 相位边界的过渡宽度，用于平滑插值，默认为 0.02
-    delta_t: float = 0.02
-) -> torch.Tensor:
+def gait_feet_spd_perio(env: TienKungEnv, delta_t: float = 0.02) -> torch.Tensor:
     """
     在步态的支撑相期间惩罚脚的速度。
 
@@ -729,12 +607,7 @@ def gait_feet_spd_perio(
     return left_spd_score + right_spd_score
 
 
-def gait_feet_frc_support_perio(
-    # 传入的环境对象，类型为 TienKungEnv
-    env: TienKungEnv,
-    # 相位边界的过渡宽度，用于平滑插值，默认为 0.02
-    delta_t: float = 0.02
-) -> torch.Tensor:
+def gait_feet_frc_support_perio(env: TienKungEnv, delta_t: float = 0.02) -> torch.Tensor:
     """
     奖励在支撑相期间提供适当支撑力的行为。
 
